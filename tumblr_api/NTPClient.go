@@ -50,18 +50,14 @@ func (dc *NTPClient) Posts(post_limit, post_offset int, query_tags string) (NTPP
 }
 
 func do(dc *NTPClient, uri string) (io.Reader, error) {
-	println(uri)
+
 	res, err := dc.client.Get(uri)
 	if err != nil {
-		return nil, err
+		return res.Body, err
 	}
 
 	if res.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("Posts for that query not found.")
-	}
-
-	if err != nil {
-		return nil, err
+		return res.Body, fmt.Errorf("Posts for that query not found.")
 	}
 
 	return res.Body, nil
