@@ -5,24 +5,22 @@
 package main
 
 import (
-	"github.com/pixfid/go-tumblr/tumblr_api"
+	"github.com/pixfid/go-tumblr/tumblrApi"
 	"os"
 	"strings"
 )
 
-var query_str string = ""
-
 func main() {
 	argv := os.Args[1:]
-	query_str = strings.Join(argv, " ")
-	client := tumblr_api.NewTPClient(nil, "BUHsuO5U9DF42uJtc8QTZlOmnUaJmBJGuU1efURxeklbdiLn9L")
-	start(client, 0, query_str)
+	queryStr := strings.Join(argv, " ")
+	client := tumblrApi.NewTPClient(nil, "BUHsuO5U9DF42uJtc8QTZlOmnUaJmBJGuU1efURxeklbdiLn9L")
+	start(client, 0, queryStr)
 }
 
-func start(client *tumblr_api.NTPClient, offset int, query string) {
+func start(client *tumblrApi.NTPClient, offset int, query string) {
 
 	for {
-		var links map[int]string
+		var links *map[int]string
 
 		posts, err := client.Posts(100, offset, query)
 		if err != nil {
@@ -36,16 +34,16 @@ func start(client *tumblr_api.NTPClient, offset int, query string) {
 			break
 		}
 
-		tumblr_api.Download(links, query)
+		tumblrApi.Download(links, query)
 	}
 }
 
-func getLinks(posts *tumblr_api.NTPPosts) (map[int]string, int) {
+func getLinks(posts *tumblrApi.NTPPosts) (*map[int]string, int) {
 
 	cnt, next := 0, 0
 
 	if len(posts.Response.Posts) == 0 {
-		return map[int]string{}, 0
+		return &map[int]string{}, 0
 	}
 
 	next = posts.Response.Links.Next.Post.Offset
@@ -61,7 +59,7 @@ func getLinks(posts *tumblr_api.NTPPosts) (map[int]string, int) {
 		}
 	}
 
-	return la, next
+	return &la, next
 }
 
 func isGIF(url string) bool {

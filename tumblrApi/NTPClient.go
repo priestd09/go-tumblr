@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-package tumblr_api
+package tumblrApi
 
 import (
 	"fmt"
@@ -13,7 +13,7 @@ import (
 )
 
 const (
-	base_url string = "https://api.tumblr.com/v2/mobile/search?"
+	baseURL string = "https://api.tumblr.com/v2/mobile/search?"
 )
 
 type NTPClient struct {
@@ -21,25 +21,25 @@ type NTPClient struct {
 	apiKey string
 }
 
-func NewTPClient(httpClient *http.Client, api_key string) *NTPClient {
+func NewTPClient(httpClient *http.Client, apiKey string) *NTPClient {
 	if httpClient == nil {
 		httpClient = http.DefaultClient
 	}
-	return &NTPClient{client: httpClient, apiKey: api_key}
+	return &NTPClient{client: httpClient, apiKey: apiKey}
 }
 
-func (dc *NTPClient) Posts(post_limit, post_offset int, query_tags string) (NTPPosts, error) {
+func (dc *NTPClient) Posts(postLimit, postOffset int, queryTags string) (NTPPosts, error) {
 
 	var posts NTPPosts
 
 	values := url.Values{}
-	values.Add("post_limit", strconv.Itoa(post_limit))
-	values.Add("post_offset", strconv.Itoa(post_offset))
-	values.Add("query", query_tags)
+	values.Add("post_limit", strconv.Itoa(postLimit))
+	values.Add("post_offset", strconv.Itoa(postOffset))
+	values.Add("query", queryTags)
 	values.Add("explicit", "true")
 	values.Add("api_key", dc.apiKey)
 
-	reader, err := do(dc, base_url+values.Encode())
+	reader, err := do(dc, baseURL+values.Encode())
 	if err != nil {
 		return posts, err
 	}

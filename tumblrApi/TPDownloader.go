@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-package tumblr_api
+package tumblrApi
 
 import (
 	"fmt"
@@ -14,7 +14,7 @@ import (
 )
 
 type task struct {
-	num int
+	id  int
 	tag string
 	url string
 }
@@ -24,9 +24,9 @@ type result struct {
 	result bool
 }
 
-func Download(urls map[int]string, tag string) {
-	var cnt int = 0
-	count := len(urls)
+func Download(urls *map[int]string, tag string) {
+	var taskId = 0
+	count := len(*urls)
 
 	tasksChan := make(chan task, count)
 	resultsChan := make(chan result, count)
@@ -37,10 +37,10 @@ func Download(urls map[int]string, tag string) {
 		go worker(tasksChan, resultsChan)
 	}
 
-	for _, v := range urls {
-		tsk := task{num: cnt, url: v, tag: tag}
+	for _, imageUrl := range *urls {
+		tsk := task{id: taskId, url: imageUrl, tag: tag}
 		tasksChan <- tsk
-		cnt++
+		taskId++
 	}
 
 	results := make([]result, count)
@@ -48,6 +48,17 @@ func Download(urls map[int]string, tag string) {
 	for i := 0; i < count; i++ {
 		res := <-resultsChan
 		results[res.idx] = res
+	}
+}
+
+func worker(tasksChan <-chan task, resultsChan chan<- result) {
+	for {
+		tsk := <-tasksChan
+		rslt := result{
+			result: download(tsk.url, tsk.tag),
+			idx:    tsk.id,
+		}
+		resultsChan <- rslt
 	}
 }
 
@@ -91,22 +102,9 @@ func download(url string, tag string) bool {
 	return true
 }
 
-func worker(tasksChan <-chan task, resultsChan chan<- result) {
-	for {
-		tsk := <-tasksChan
-		rslt := result{
-			result: download(tsk.url, tsk.tag),
-			idx:    tsk.num,
-		}
-		resultsChan <- rslt
-	}
-}
-
 func isExist(name string) bool {
-	if _, err := os.Stat(name); err != nil {
-		if os.IsNotExist(err) {
-			return false
-		}
+	if _, err := os.Stat(name); err != nil && os.IsNotExist(err) {
+		return false
 	}
 	return true
 }
