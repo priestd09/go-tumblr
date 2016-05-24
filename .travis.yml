@@ -7,5 +7,5 @@ go:
   - tip
 
 script:
-  - go get github.com/pixfid/go-zaycevnet
+  - go get github.com/pixfid/go-tumblr
   - go test -v -covermode=count -coverprofile=coverage.out
