@@ -26,7 +26,7 @@ import (
 func main() {
 	argv := os.Args[1:]
 	queryStr := strings.Join(argv, " ")
-	client := tumblrApi.NewTPClient(nil, "BUHsuO5U9DF42uJtc8QTZlOmnUaJmBJGuU1efURxeklbdiLn9L")
+	client := tumblrApi.NewTPClient(nil, "api_key")
 	start(client, 0, queryStr)
 }
 
